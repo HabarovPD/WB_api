@@ -1,12 +1,10 @@
-
 import pandas as pd
 from wb_api import WBApi
 import time
 from dictionary import column_excel
+import db.db as db
 
 api = WBApi(api_key="eyJhbGciOiJFUzI1NiIsImtpZCI6IjIwMjUwOTA0djEiLCJ0eXAiOiJKV1QifQ.eyJhY2MiOjEsImVudCI6MSwiZXhwIjoxNzg1NjA0NTQyLCJpZCI6IjAxOWMxMjdhLTdhOGEtNzY0Yi1iOTkxLWYxMDVkODY3ZWVjNyIsImlpZCI6MjYwMTM2MTMsIm9pZCI6MTU0MDY1LCJzIjoxMDczNzUwMDUyLCJzaWQiOiIxZDMzYWU0Yi0zOTZlLTQxMDctYWM0NS1jN2Q4YTMyMGE4ZGUiLCJ0IjpmYWxzZSwidWlkIjoyNjAxMzYxM30.ZwcwhoCEMMrpOevzlwMtWRH06FwNp_ioKawAEsGLM6PXtw_zoXdvHXMK-Q0XI6_kHTbQCDVXXCX91LghW0ibxg")
-
-
 
 def fetch_financial_report(date_from_str, date_to_str):
     
@@ -81,6 +79,9 @@ def fetch_financial_report(date_from_str, date_to_str):
 
 
 if __name__ == "__main__":
+
+    db.test_connection()
+    
     # Даты должны быть в формате YYYY-MM-DD
     # Обратите внимание: API v5 требует, чтобы date_from был не старше 90 дней
-    fetch_financial_report("2025-10-01", "2026-01-31")
+    #fetch_financial_report("2025-10-01", "2026-01-31")
