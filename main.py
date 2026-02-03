@@ -7,4 +7,5 @@ if __name__ == "__main__":
 
     DataCollector.init_db()
     DataCollector.collect_news()
-    DataCollector.collect_nomenclature()
+    DataCollector.warehouses()
+    #DataCollector.collect_nomenclature()

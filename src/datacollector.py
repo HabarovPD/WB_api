@@ -101,3 +101,11 @@ def collect_nomenclature(locale: str = "ru"):
                 else:
                     break
     session.commit()
+
+
+def warehouses():
+    """Метод возвращает список всех складов продавца"""
+
+    data = WbApi.Marketplace.warehouses()
+    a = 1
+    #{'name': 'Мой склад', 'officeId': 10236, 'id': 1525428, 'cargoType': 1, 'deliveryType': 1, 'isDeleting': False, 'isProcessing': False}

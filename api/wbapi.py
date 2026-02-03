@@ -297,6 +297,14 @@ class WbApi:
 
             url = f"{WbApi.Marketplace.BaseUrl}/ping"
             return get_responce(url)
+        
+        @staticmethod
+        def warehouses():
+            """Метод возвращает список всех складов продавца"""
+
+            url = f"{WbApi.Marketplace.BaseUrl}/api/v3/warehouses"
+            return get_responce(url)
+        
 
     class Statistics:
         """Statistics"""

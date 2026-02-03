@@ -2,15 +2,6 @@
 
 from enum import Enum
 
-class Methods(Enum):
-    """ Методы http запросов """
-
-    GET = 'get'
-    PUT = 'put'
-    POST = 'post'
-    PATCH = 'patch'
-    DELETE = 'delete'
-
 class SellerAccessCode(Enum):
     """Коды разделов профиля продавца и их описание."""
 
