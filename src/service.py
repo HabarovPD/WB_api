@@ -1,61 +1,35 @@
 """Сервисные"""
 
 from enum import Enum
+from datetime import date, timedelta
 
-class SellerAccessCode(Enum):
-    """Коды разделов профиля продавца и их описание."""
 
-    # balance - Просмотр баланса и вывод средств
-    BALANCE = "balance"
-    # brands - Управление брендами
-    BRANDS = "brands"
-    # changeJam - Доступ к подключению подписки Джем:
-    # А/Б тесты, отметки на фото, автозапуски видео, сравнение карточек
-    CHANGE_JAM = "changeJam"
-    # discountPrice - Изменение цен на товары, управление скидками и акциями
-    DISCOUNT_PRICE = "discountPrice"
-    # finance - Финансовая аналитика. Статистика по балансу, финансовые отчёты, история платежей
-    FINANCE = "finance"
-    # showcase - Управление витриной магазина
-    SHOWCASE = "showcase"
-    # suppliersDocuments - Просмотр и скачивание документов по работе с площадкой
-    SUPPLIERS_DOCUMENTS = "suppliersDocuments"
-    # supply - Создание и управление поставками FBW
-    SUPPLY = "supply"
-    # feedbacksQuestions - Просмотр и ответы на вопросы и отзывы покупателей, жалобы на отзывы
-    FEEDBACKS_QUESTIONS = "feedbacksQuestions"
-    # questions - Просмотр и ответы на вопросы покупателей
-    QUESTIONS = "questions"
-    # pinFeedbacks - Возможность закреплять и откреплять отзывы
-    PIN_FEEDBACKS = "pinFeedbacks"
-    # pointsForReviews - Баллы за отзывы
-    POINTS_FOR_REVIEWS = "pointsForReviews"
-    # feedbacks - Просмотр и ответы на отзывы покупателей
-    FEEDBACKS = "feedbacks"
-    # wbPoint - WB Point
-    WB_POINT = "wbPoint"
+def standart_period(
+    start: date = date.today(),
+    end: date = date.today(),
+    end_days_before: int = 0,
+    start_days_delta: int = 0,
+    date_format: str = "%Y-%m-%d",
+) -> dict:
+    """Возвращает стандартный период"""
 
-    @property
-    def description(self):
-        """Возвращает описание кода доступа."""
+    end_date = end
+    if end_days_before:
+        end_date -= timedelta(days=end_days_before)
 
-        descriptions = {
-            "balance": "Просмотр баланса и вывод средств",
-            "brands": "Управление брендами",
-            "changeJam": "Доступ к подключению подписки Джем: А/Б тесты,"
-            " отметки на фото, автозапуски видео, сравнение карточек",
-            "discountPrice": "Изменение цен на товары, управление скидками и акциями",
-            "finance": "Финансовая аналитика. Статистика по балансу,"
-            " финансовые отчёты, история платежей",
-            "showcase": "Управление витриной магазина",
-            "suppliersDocuments": "Просмотр и скачивание документов по работе с площадкой",
-            "supply": "Создание и управление поставками FBW",
-            "feedbacksQuestions": "Просмотр и ответы на вопросы"
-            " и отзывы покупателей, жалобы на отзывы",
-            "questions": "Просмотр и ответы на вопросы покупателей",
-            "pinFeedbacks": "Возможность закреплять и откреплять отзывы",
-            "pointsForReviews": "Баллы за отзывы",
-            "feedbacks": "Просмотр и ответы на отзывы покупателей",
-            "wbPoint": "WB Point",
-        }
-        return descriptions[self.value]
+    start_date = min(start, end_date)
+    if start_days_delta:
+        start_date -= timedelta(days=start_days_delta)
+
+    return {
+        "start": start_date.strftime(date_format),
+        "end": end_date.strftime(date_format),
+    }
+
+
+class WeekDayEnum(Enum):
+    """Агрегаторы запроса - недеоя / день"""
+
+    Week = "week"
+    Day = "day"
+

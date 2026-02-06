@@ -4,10 +4,20 @@ from datetime import datetime
 from sqlalchemy.orm import sessionmaker
 import db.models as Models
 from api.wbapi import WbApi
+import src.service as Service
 
 
 Session = sessionmaker(bind=Models.engine)
 session = Session()
+
+
+def fill_params(db_table, data_dict):
+    """Заполняет параметры таблицы совпадающими параметрами словаря"""
+
+    valid_keys = set(db_table.__mapper__.columns.keys())
+    filtered_data = {k: v for k, v in data_dict.items() if k in valid_keys}
+
+    return db_table(**filtered_data)
 
 
 def init_db():
@@ -103,9 +113,107 @@ def collect_nomenclature(locale: str = "ru"):
     session.commit()
 
 
-def warehouses():
+def get_offices():
+    """Получает склады WB"""
+
+    data = WbApi.Marketplace.get_offices()
+    if data:
+        for office in data:
+            new_office = Models.Office(**office)
+            session.merge(new_office)
+        session.commit()
+
+
+def get_warehouses():
     """Метод возвращает список всех складов продавца"""
 
     data = WbApi.Marketplace.warehouses()
-    a = 1
-    #{'name': 'Мой склад', 'officeId': 10236, 'id': 1525428, 'cargoType': 1, 'deliveryType': 1, 'isDeleting': False, 'isProcessing': False}
+    if data:
+        for warehouses in data:
+            new_warehouses = Models.Warehouses(**warehouses)
+            session.merge(new_warehouses)
+        session.commit()
+
+
+def get_charcs():
+    """Опрос характеристик для всех товаров"""
+
+    nomenclature = session.query(Models.Nomenclature).filter_by(isGroup=False).all()
+    for nom in nomenclature:
+        data = WbApi.Content.get_object_charcs(nom.id)
+        for charc in data["data"]:
+            new_charc = fill_params(Models.Characteristics, charc)
+            new_charc.id = charc["charcID"]
+            session.merge(new_charc)
+        session.commit()
+
+
+def get_others_chr():
+    """Прочее"""
+
+    data = WbApi.Content.get_colors()
+    if data:
+        for d in data["data"]:
+            new_rec = Models.Colors(**d)
+            session.merge(new_rec)
+        session.commit()
+
+    data = WbApi.Content.get_kinds()
+    if data:
+        for name in data["data"]:
+            new_rec = Models.Kinds(name=name)
+            session.merge(new_rec)
+        session.commit()
+
+    data = WbApi.Content.get_countries()
+    if data:
+        for d in data["data"]:
+            new_rec = Models.Countries(**d)
+            session.merge(new_rec)
+        session.commit()
+
+    data = WbApi.Content.get_seasons()
+    if data:
+        for name in data["data"]:
+            new_rec = Models.Seasons(name=name)
+            session.merge(new_rec)
+        session.commit()
+
+    data = WbApi.Content.get_vat()
+    if data:
+        for name in data["data"]:
+            new_rec = Models.Vat(name=name)
+            session.merge(new_rec)
+        session.commit()
+
+
+def sales_funel():
+    """Статистика карточек товаров за период"""
+
+    data, json = WbApi.Analytics.SalesFunel.get_data()
+
+
+def sales_funel_week():
+    """Статистика карточек по дням"""
+
+    json = WbApi.Analytics.SalesFunelWeek.get_json(
+        nm_ids=[781968202, 785196489], aggregation_level=Service.WeekDayEnum.Week
+    )
+    data, json = WbApi.Analytics.SalesFunelWeek.get_data(json)
+
+
+def get_detailed_report():
+    """Финансовый отчет"""
+
+    params = None
+    rep = []
+
+    while True:
+        data, params = WbApi.Statistics.DetailedReport.get_rep(params, limit=100)
+        if data is None:
+            raise "Ошибка при получении запроса"
+        if isinstance(data, bool) and data is True:
+            break
+        rep.extend(data)
+        params['rrdid'] = data[len(data)-1]['rrd_id']
+    rep = 1

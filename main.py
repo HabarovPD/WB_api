@@ -1,11 +1,15 @@
 """Основной модуль программы"""
 
+from api.wbapi import WbApi
+from api.com.common import Common
 import src.datacollector as DataCollector
 
 
 if __name__ == "__main__":
 
-    DataCollector.init_db()
-    DataCollector.collect_news()
-    DataCollector.warehouses()
-    #DataCollector.collect_nomenclature()
+    wbapi = WbApi()
+    common = Common(parent=wbapi)
+    ping = common.ping()
+    news = common.get_news()
+
+    print("Done!")
