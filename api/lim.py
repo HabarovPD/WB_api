@@ -8,7 +8,7 @@ class RateLimit:
     """ "Реализация задержек между запросами"""
 
     
-    def __init__(self, limit: int = 1, interval_ms: int = 1000, burst: int = 1):
+    def __init__(self, limit: int = 1, interval_ms: int = 60000, burst: int = 1):
         """Инициализация класса"""
 
         self.limit = limit

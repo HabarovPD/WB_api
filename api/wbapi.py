@@ -18,13 +18,13 @@ class WbApi:
 
         self.limits = {}
 
-    def add_limit(self, url: str, limit: int = 1, interval: int = 1000, burst: int = 1):
+    def add_limit(self, url: str, **kwargs):
         """Инициализирует лимит если он не инициализирован ранее"""
 
         if url in self.limits:
             return
 
-        self.limits[url] = RateLimit(limit=limit, interval_ms=interval, burst=burst)
+        self.limits[url] = RateLimit(**kwargs)
         return
 
     def get_headers(self):
